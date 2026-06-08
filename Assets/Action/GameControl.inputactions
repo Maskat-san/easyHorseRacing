@@ -1,0 +1,143 @@
+{
+    "version": 1,
+    "name": "GameControl",
+    "maps": [
+        {
+            "name": "Player1",
+            "id": "9f52eafa-a287-40be-9383-229c9af5a68c",
+            "actions": [
+                {
+                    "name": "Whip",
+                    "type": "Button",
+                    "id": "bc7b9614-32eb-409c-a55d-7dbc7f25f17f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PaceUp",
+                    "type": "Button",
+                    "id": "da06f5ee-2969-429b-b8aa-d1bb828b2e57",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PaceDown",
+                    "type": "Button",
+                    "id": "8bbccaeb-f6b1-431d-9454-3ec677a52219",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "bb323865-44b9-4b69-af17-a4f949651c6c",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Whip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "310414a2-ee07-41c2-b0cb-748da3240ae5",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PaceUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b60d1fad-1d14-439a-adfc-e63185b9ef46",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PaceDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Player2",
+            "id": "83552719-aef4-439a-816c-d4fe4180e34d",
+            "actions": [
+                {
+                    "name": "Whip",
+                    "type": "Button",
+                    "id": "88bf1302-cf26-49a2-8221-dd4ace319c2d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PaceUp",
+                    "type": "Button",
+                    "id": "df56fe1a-925a-4ae6-a5f2-df0637bdce7c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PaceDown",
+                    "type": "Button",
+                    "id": "acd7cc77-be8b-4d01-9df0-436a7306591f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "30329f52-887b-4904-9325-bcf457888792",
+                    "path": "<Keyboard>/rightShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Whip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "735e4793-5e7b-4ba3-8f20-f3fdf1ea76ee",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PaceUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dac6f687-bcbc-429d-98ee-e1aee3032878",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PaceDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
