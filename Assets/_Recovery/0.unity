@@ -1091,7 +1091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6267268070986900982, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
       propertyPath: m_Mass
-      value: 480
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6840688206519072557, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1135,6 +1135,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2657362418276567931, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
+    - {fileID: 7798844716413266519, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5958295761768648619, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
     m_AddedGameObjects: []
@@ -2017,44 +2018,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6171287198918618519, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
   m_PrefabInstance: {fileID: 4407507550129604425}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1828914981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828914974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ca22aafe34c94f4bb4286d7d656f4ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  gearSettings:
-  - forwardForce: 1000
-    maxSpeed: 10
-    staminaDrainPerSecond: 5
-  - forwardForce: 1000
-    maxSpeed: 10
-    staminaDrainPerSecond: 5
-  - forwardForce: 1000
-    maxSpeed: 10
-    staminaDrainPerSecond: 5
-  - forwardForce: 1000
-    maxSpeed: 10
-    staminaDrainPerSecond: 5
-  - forwardForce: 1000
-    maxSpeed: 10
-    staminaDrainPerSecond: 5
-  - forwardForce: 1000
-    maxSpeed: 10
-    staminaDrainPerSecond: 5
-  currentGear: 1
-  maxStamina: 2000
-  currentStamina: 2000
-  exhaustedGearDownInterval: 1.5
-  usePlayerInput: 1
-  gearUpKey: 119
-  gearDownKey: 115
 --- !u!114 &1828914982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2069,6 +2032,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RaceDistanceTracker
   goalDistance: 2000
   currentDistance: 0
+--- !u!114 &1828914983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828914974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca22aafe34c94f4bb4286d7d656f4ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorseStaminaGearSystem
+  gearSettings:
+  - forwardForce: 1200
+    maxSpeed: 10
+    staminaDrainPerSecond: 0.5
+  - forwardForce: 1500
+    maxSpeed: 13
+    staminaDrainPerSecond: 1.5
+  - forwardForce: 1800
+    maxSpeed: 16
+    staminaDrainPerSecond: 4
+  - forwardForce: 2200
+    maxSpeed: 20
+    staminaDrainPerSecond: 8
+  - forwardForce: 2600
+    maxSpeed: 24
+    staminaDrainPerSecond: 14
+  - forwardForce: 3200
+    maxSpeed: 29
+    staminaDrainPerSecond: 22
+  currentGear: 1
+  maxStamina: 2000
+  currentStamina: 2000
+  exhaustedGearDownInterval: 1.5
+  usePlayerInput: 1
+  gearUpKey: 119
+  gearDownKey: 115
 --- !u!1 &1920094534
 GameObject:
   m_ObjectHideFlags: 0
@@ -2236,6 +2237,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P1
       objectReference: {fileID: 0}
+    - target: {fileID: 6267268070986900982, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6840688206519072557, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.5
@@ -2276,16 +2281,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7798844716413266519, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6171287198918618519, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1828914981}
+      addedObject: {fileID: 1828914982}
     - targetCorrespondingSourceObject: {fileID: 6171287198918618519, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1828914982}
+      addedObject: {fileID: 1828914983}
   m_SourcePrefab: {fileID: 100100000, guid: 8afd1b8a332827f43bb793381347880a, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
