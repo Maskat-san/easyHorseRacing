@@ -12,18 +12,17 @@ public class HorseController : MonoBehaviour
     [Tooltip("現在走っているレール番号")]
     public int currentRailIndex = 0;
 
-    [Header("ウマの移動設定")]
-    public float targetSpeed = 16f;
-    public float acceleration = 8f;
-    public float railFollowStrength = 12f;
+    [Header("ウマの物理設定")]
+    public float forwardForce = 2000f;
+    public float railSteeringForce = 1200f;
     public float maxSpeed = 20f;
 
     [Header("レーン変更")]
     public float laneChangeCooldown = 0.3f;
 
     [Header("Spline追従")]
-    public float lookAhead = 0.015f;
-    public float rotationSpeed = 10f;
+    public float lookAhead = 0.02f;
+    public float rotationSpeed = 8f;
 
     private Rigidbody rb;
     private float laneChangeTimer;
@@ -39,8 +38,6 @@ public class HorseController : MonoBehaviour
         if (laneRails == null || laneRails.Length == 0)
         {
             Debug.LogError("laneRailsにSplineContainerを登録してください。");
-            enabled = false;
-            return;
         }
 
         currentRailIndex = Mathf.Clamp(
@@ -98,8 +95,6 @@ public class HorseController : MonoBehaviour
     {
         SplineContainer currentRail = laneRails[currentRailIndex];
 
-        if (currentRail == null) return;
-
         float3 horsePos = transform.position;
 
         float3 nearestPoint;
@@ -115,74 +110,42 @@ public class HorseController : MonoBehaviour
         Vector3 railPosWorld =
             currentRail.transform.TransformPoint((Vector3)nearestPoint);
 
-        float targetT;
-
-        if (currentRail.Spline.Closed)
-        {
-            targetT = Mathf.Repeat(t + lookAhead, 1f);
-        }
-        else
-        {
-            targetT = Mathf.Clamp01(t + lookAhead);
-        }
+        float targetT = Mathf.Repeat(t + lookAhead, 1f);
 
         Vector3 railTargetPos =
-            currentRail.transform.TransformPoint(
-                (Vector3)currentRail.EvaluatePosition(targetT)
-            );
+            (Vector3)currentRail.EvaluatePosition(targetT);
 
-        // レールの進行方向
-        Vector3 forwardVec = railTargetPos - railPosWorld;
-        forwardVec.y = 0f;
+        Vector3 forwardVec =
+            (railTargetPos - railPosWorld).normalized;
 
         if (forwardVec.sqrMagnitude < 0.001f)
             return;
 
-        forwardVec.Normalize();
+        // 前進力
+        rb.AddForce(forwardVec * forwardForce, ForceMode.Force);
 
-        // レール上の目標位置へ戻る方向
-        Vector3 toRail = railPosWorld - transform.position;
-        toRail.y = 0f;
+        // 現在のレールへ戻る力
+        Vector3 toRail = railTargetPos - transform.position;
 
-        // 前後方向を除去して、横ズレだけを補正
         Vector3 lateralCorrection =
             Vector3.ProjectOnPlane(toRail, forwardVec);
 
-        // 現在速度
-        Vector3 currentVelocity = rb.linearVelocity;
-        Vector3 horizontalVelocity =
-            new Vector3(currentVelocity.x, 0f, currentVelocity.z);
-
-        // レール方向への理想速度
-        Vector3 desiredVelocity = forwardVec * targetSpeed;
-
-        // レールからズレていたら、横方向にも補正を加える
-        desiredVelocity += lateralCorrection * railFollowStrength;
-
-        // 最大速度制限
-        if (desiredVelocity.magnitude > maxSpeed)
+        if (lateralCorrection.sqrMagnitude > 0.001f)
         {
-            desiredVelocity = desiredVelocity.normalized * maxSpeed;
+            rb.AddForce(
+                lateralCorrection.normalized * railSteeringForce,
+                ForceMode.Force
+            );
         }
 
-        // 現在速度を理想速度へ滑らかに近づける
-        Vector3 newHorizontalVelocity = Vector3.Lerp(
-            horizontalVelocity,
-            desiredVelocity,
-            Time.fixedDeltaTime * acceleration
-        );
-
-        rb.linearVelocity = new Vector3(
-            newHorizontalVelocity.x,
-            rb.linearVelocity.y,
-            newHorizontalVelocity.z
-        );
-
         // 向き補正
-        if (newHorizontalVelocity.magnitude > 0.5f)
+        Vector3 lookDir = rb.linearVelocity;
+        lookDir.y = 0f;
+
+        if (lookDir.magnitude > 1f)
         {
             Quaternion targetRotation =
-                Quaternion.LookRotation(newHorizontalVelocity.normalized, Vector3.up);
+                Quaternion.LookRotation(lookDir.normalized, Vector3.up);
 
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
@@ -191,7 +154,14 @@ public class HorseController : MonoBehaviour
             );
         }
 
-        Debug.DrawLine(transform.position, railPosWorld, Color.green);
+        // 速度制限
+        if (rb.linearVelocity.magnitude > maxSpeed)
+        {
+            rb.linearVelocity =
+                rb.linearVelocity.normalized * maxSpeed;
+        }
+
+        Debug.DrawLine(transform.position, railTargetPos, Color.green);
         Debug.DrawRay(railPosWorld, forwardVec * 5f, Color.red);
     }
 }
