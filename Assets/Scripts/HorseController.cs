@@ -110,7 +110,7 @@ public class HorseController : MonoBehaviour
         Vector3 railPosWorld =
             currentRail.transform.TransformPoint((Vector3)nearestPoint);
 
-        float targetT = Mathf.Repeat(t + lookAhead, 1f);
+        float targetT = Mathf.Repeat(t - lookAhead, 1f);
 
         Vector3 railTargetPos =
             (Vector3)currentRail.EvaluatePosition(targetT);
