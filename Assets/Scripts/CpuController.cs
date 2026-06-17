@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.Splines;
 using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
-public class HorseController : MonoBehaviour
+public class CpuController : MonoBehaviour
 {
     [Header("レール設定")]
     [Tooltip("内側から外側の順にSplineContainerを登録してください")]
@@ -17,8 +18,19 @@ public class HorseController : MonoBehaviour
     public float railSteeringForce = 1200f;
     public float maxSpeed = 20f;
 
-    [Header("レーン変更")]
-    public float laneChangeCooldown = 0.3f;
+    [Header("CPUレーン変更")]
+    [Tooltip("レーン変更を考える最短時間")]
+    public float minLaneDecisionTime = 1.0f;
+
+    [Tooltip("レーン変更を考える最長時間")]
+    public float maxLaneDecisionTime = 3.0f;
+
+    [Tooltip("実際にレーン変更する確率")]
+    [Range(0f, 1f)]
+    public float laneChangeChance = 0.45f;
+
+    [Tooltip("レーン変更後のクールダウン")]
+    public float laneChangeCooldown = 0.5f;
 
     [Header("Spline追従")]
     public float lookAhead = 0.02f;
@@ -28,7 +40,12 @@ public class HorseController : MonoBehaviour
     private HorseStaminaGearSystem staminaGear;
 
     private Rigidbody rb;
+
     private float laneChangeTimer;
+    private float laneDecisionTimer;
+
+    private float baseForwardForce;
+    private float baseMaxSpeed;
 
     void Start()
     {
@@ -42,6 +59,7 @@ public class HorseController : MonoBehaviour
         if (laneRails == null || laneRails.Length == 0)
         {
             Debug.LogError("laneRailsにSplineContainerを登録してください。");
+            return;
         }
 
         currentRailIndex = Mathf.Clamp(
@@ -49,11 +67,13 @@ public class HorseController : MonoBehaviour
             0,
             laneRails.Length - 1
         );
+
+        ResetLaneDecisionTimer();
     }
 
     void Update()
     {
-        HandleRailInput();
+        HandleCpuLaneDecision();
     }
 
     void FixedUpdate()
@@ -63,40 +83,64 @@ public class HorseController : MonoBehaviour
         MoveAlongCurrentRail();
     }
 
-    void HandleRailInput()
+    void HandleCpuLaneDecision()
     {
         laneChangeTimer -= Time.deltaTime;
+        laneDecisionTimer -= Time.deltaTime;
+
+        if (laneDecisionTimer > 0f) return;
+
+        ResetLaneDecisionTimer();
 
         if (laneChangeTimer > 0f) return;
+        if (laneRails == null || laneRails.Length <= 1) return;
 
-        if (laneRails == null || laneRails.Length == 0) return;
-
-        if (Input.GetKeyDown(KeyCode.D))
+        // 確率でレーン変更する
+        if (Random.value > laneChangeChance)
         {
-            currentRailIndex++;
-
-            currentRailIndex = Mathf.Clamp(
-                currentRailIndex,
-                0,
-                laneRails.Length - 1
-            );
-
-            laneChangeTimer = laneChangeCooldown;
+            return;
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+
+        int direction = ChooseLaneChangeDirection();
+
+        if (direction == 0)
         {
-            currentRailIndex--;
-
-            currentRailIndex = Mathf.Clamp(
-                currentRailIndex,
-                0,
-                laneRails.Length - 1
-            );
-
-            laneChangeTimer = laneChangeCooldown;
+            return;
         }
+
+        currentRailIndex += direction;
+
+        currentRailIndex = Mathf.Clamp(
+            currentRailIndex,
+            0,
+            laneRails.Length - 1
+        );
+
+        laneChangeTimer = laneChangeCooldown;
     }
 
+    int ChooseLaneChangeDirection()
+    {
+        // 一番内側なら外側にしか行けない
+        if (currentRailIndex <= 0)
+        {
+            return 1;
+        }
+
+        // 一番外側なら内側にしか行けない
+        if (currentRailIndex >= laneRails.Length - 1)
+        {
+            return -1;
+        }
+
+        // 中間レーンならランダムで内側 or 外側
+        return Random.value < 0.5f ? -1 : 1;
+    }
+
+    void ResetLaneDecisionTimer()
+    {
+        laneDecisionTimer = Random.Range(minLaneDecisionTime, maxLaneDecisionTime);
+    }
 
     void MoveAlongCurrentRail()
     {
@@ -117,10 +161,13 @@ public class HorseController : MonoBehaviour
         Vector3 railPosWorld =
             currentRail.transform.TransformPoint((Vector3)nearestPoint);
 
+        // Splineと逆方向に進む
         float targetT = Mathf.Repeat(t - lookAhead, 1f);
 
         Vector3 railTargetPos =
-            (Vector3)currentRail.EvaluatePosition(targetT);
+            currentRail.transform.TransformPoint(
+                (Vector3)currentRail.Spline.EvaluatePosition(targetT)
+            );
 
         Vector3 forwardVec =
             (railTargetPos - railPosWorld).normalized;
